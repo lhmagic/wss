@@ -1,6 +1,9 @@
 #include  "si4432.h"
 
-#define BW_50000
+#define 	BW_9600
+
+#define		OP_MODE				0x08			//RX Multi Packet & Automatic transmit.
+//#define		OP_MODE				0
 
 void si4432_init(void) {
     rf_sdn_high();
@@ -36,22 +39,6 @@ void si4432_init(void) {
     spi_rw_byte(0x25|0x80, 0xFF); //
 
     spi_rw_byte(0x2a|0x80, 0x50);
-#endif
-
-#ifdef  BW_50000
-    spi_rw_byte(0x1c|0x80, 0x9A);   // 下面的设置根据Silabs 的Excel
-    spi_rw_byte(0x1d|0x80, 0x44);   // 使能 afc
-    spi_rw_byte(0x1e|0x80, 0x0A);
-    spi_rw_byte(0x1f|0x80, 0x03);
-
-    spi_rw_byte(0x20|0x80, 0x3c);
-    spi_rw_byte(0x21|0x80, 0x01); //
-    spi_rw_byte(0x22|0x80, 0x11); //
-    spi_rw_byte(0x23|0x80, 0x11); //
-    spi_rw_byte(0x24|0x80, 0x07); //
-    spi_rw_byte(0x25|0x80, 0xFF); //
-
-    spi_rw_byte(0x2a|0x80, 0x48);
 #endif
 
 #ifdef  BW_9600
@@ -104,15 +91,6 @@ void si4432_init(void) {
     spi_rw_byte(0x72|0x80, 0x50);   // 频偏为 50KHz
 #endif
 
-#ifdef  BW_50000
-    spi_rw_byte(0x69|0x80, 0x60);
-    spi_rw_byte(0x6e|0x80, 0x0C);
-    spi_rw_byte(0x6f|0x80, 0xCD);
-    spi_rw_byte(0x70|0x80, 0x0e);
-    spi_rw_byte(0x71|0x80, 0x23);   // 发射不需要 CLK，FiFo ， FSK模式
-    spi_rw_byte(0x72|0x80, 0x50);   // 频偏为 50KHz
-#endif
-
 #ifdef  BW_9600
     spi_rw_byte(0x69|0x80, 0x60);
     spi_rw_byte(0x6e|0x80, 0x4e);
@@ -128,10 +106,10 @@ void si4432_init(void) {
     spi_rw_byte(0x76|0x80, 0x57);   //
     spi_rw_byte(0x77|0x80, 0x80);
 
-    spi_rw_byte(0x7a|0x80, 50);  // step 500KHz
+    spi_rw_byte(0x7a|0x80, 30);  // step 300KHz
 		
 		spi_rw_byte(0x7D|0x80, 0x1F);
-		spi_rw_byte(0x7E|0x80, 0x1F);		
+		spi_rw_byte(0x7E|0x80, 0x1F);
 }
 
 void set_channel(uint8_t ch) {
@@ -158,6 +136,7 @@ void set_header(uint8_t header) {
 uint8_t get_header(void) {
 	return spi_rw_byte(0x47,0x00);
 }
+
 
 static uint8_t *rf_isr_buf, rf_tx_cnt;
 
@@ -220,7 +199,7 @@ void si4432_rx(void)
     spi_rw_byte(0x0e|0x80, 0x02);       // 设置天线开关
 
     spi_rw_byte(0x08|0x80, 0x03);       //清发射，接收缓冲区
-    spi_rw_byte(0x08|0x80, 0x08);       //清发射，接收缓冲区
+    spi_rw_byte(0x08|0x80, 0x00|OP_MODE);       //清发射，接收缓冲区
 
     spi_rw_byte(0x03,0x00);		       //清掉现有的中断标志
     spi_rw_byte(0x04,0x00);		       //清掉现有的中断标志

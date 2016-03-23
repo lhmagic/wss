@@ -48,8 +48,6 @@ void iic_rx_isr(void);
 void iic_read(uint8_t addr, uint8_t *buf, uint8_t cnt);
 uint8_t is_iic_read(void) ;
 uint8_t is_iic_stopf(void);
-uint8_t is_iic_addr(void);
-uint8_t is_iic_nackf(void);
 void gpio_cfg(void);
 void usart_cfg(uint32_t bandrate);
 void usart_putc(uint8_t ch);

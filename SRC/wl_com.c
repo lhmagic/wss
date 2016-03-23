@@ -3,6 +3,7 @@
 static uint8_t rf_packet;
 static uint8_t rf_cnt, rf_buf[256];
 static uint8_t rf_rx_cnt, *rf_rx_pbuf = rf_buf;
+static uint8_t rf_tx_done;
 
 void rf_isr(void) {
 int status, mask;
@@ -16,7 +17,7 @@ int status, mask;
 	
 	if(status & IRXFFAFULL) {
 	uint8_t i;
-		
+				
 		for(i=0; i<0x20; i++) {
 			*rf_rx_pbuf++ = spi_rw_byte(0x7f,0x00);
 			rf_rx_cnt++;
@@ -27,9 +28,10 @@ int status, mask;
 	
 	if(status & ITXFFAEM) {
 		txfae_isr();
-	}	
+	}
 	
   if(status & IPKSENT) {
+    rf_tx_done=1;
 		si4432_rx();
   }
 
@@ -54,22 +56,11 @@ int status, mask;
 extern uint8_t iic_buf[256];
 
 void rf_packet_handle(void) {
-uint8_t i;	
 	
 	if(rf_packet == 1) {
 		led2_on();
-		rf_packet = 0;
-		
-		if(!is_slave()) {
-//			get_header();
-			for(i=0; i<rf_cnt; i++) {
-				iic_buf[0x80|i] = rf_buf[i];
-			}
-			iic_buf[0x80|0x7F] = rf_cnt;					//存放接收到的数据长度
-		} else {
-			usart_packet_handle();
-			usart_tx(rf_buf, rf_cnt);
-		}
+		rf_packet = 0;		
+		usart_tx(rf_buf, rf_cnt);
 		led2_off();
 	}
 }

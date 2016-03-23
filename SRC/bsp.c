@@ -48,13 +48,18 @@ void iic_cfg(void) {
 	RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
 	RCC->CFGR3 |= RCC_CFGR3_I2C1SW;
 	
+//	I2C1->CR2 |= I2C_CR2_AUTOEND;
+//	I2C1->CR2 &= ~0x3FF;
+//	I2C1->CR2 |= 0xA0;
+	
 	I2C1->OAR1 = 0x8000 | get_iic_gid();
 	I2C1->CR2 = 0;
 	I2C1->CR2 = I2C_CR2_RELOAD;	
 	
 	I2C1->TIMINGR = 0x0090194B;
 	
-	I2C1->CR1 |= I2C_CR1_ADDRIE;
+	I2C1->CR1 |= (I2C_CR1_GCEN | I2C_CR1_RXIE | I2C_CR1_TXIE);
+	I2C1->CR1 |= (I2C_CR1_ADDRIE | I2C_CR1_STOPIE);
 	I2C1->CR1 |= I2C_CR1_PE;
 
 	NVIC_SetPriority(I2C1_IRQn, 1<<__NVIC_PRIO_BITS);
@@ -77,23 +82,11 @@ void iic_write(uint8_t addr, uint8_t *buf, uint8_t cnt) {
 }
 
 uint8_t is_iic_txis(void) {
-	return (I2C1->ISR & I2C_ISR_TXIS) ==0? 0: 1;
-}
-
-uint8_t is_iic_rxne(void) {
-	return (I2C1->ISR & I2C_ISR_RXNE) ==0? 0: 1;
+	return (I2C1->ISR & I2C_ISR_TXIS);
 }
 	
 uint8_t is_iic_txe(void) {
-	return (I2C1->ISR & I2C_ISR_TXE) ==0? 0: 1;
-}
-
-uint8_t is_iic_addr(void) {
-	return (I2C1->ISR & I2C_ISR_ADDR) ==0? 0: 1;
-}
-
-uint8_t is_iic_nackf(void) {
-	return (I2C1->ISR & I2C_ISR_NACKF) ==0? 0: 1;
+	return (I2C1->ISR & I2C_ISR_TXE);
 }
 
 uint8_t is_dummy_write(void) {
@@ -134,18 +127,32 @@ uint32_t i;
 	I2C1->CR2 |= I2C_CR2_START;
 }
 
+uint8_t is_iic_rxne(void) {
+	return (I2C1->ISR & I2C_ISR_RXNE);
+}
+
 uint8_t is_rx_done(void) {
 	if(iic_cnt >= ((I2C1->CR2 >> 16)&0xFF))
 		return 1;
 	return 0;
 }
 
+void iic_rx_isr(void) {
+	if(is_iic_rxne()) {
+		*iic_buf++ = I2C1->RXDR;
+		iic_cnt++;
+	}
+	if(is_rx_done()) {
+		
+	}
+}
+
 uint8_t is_iic_read(void) {
-	return (I2C1->ISR & I2C_ISR_DIR)==0? 0: 1;
+	return (I2C1->ISR & I2C_ISR_DIR);
 }
 
 uint8_t is_iic_stopf(void) {
-	return (I2C1->ISR & I2C_ISR_STOPF)==0? 0: 1;
+	return (I2C1->ISR & I2C_ISR_STOPF);
 }
 
 void iic_oa1_disable(void) {

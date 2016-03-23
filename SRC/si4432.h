@@ -60,7 +60,7 @@ void si4432_rx(void);
 uint8_t si4432_rcv(uint8_t *buf);
 void rf_isr(void);
 void txfae_isr(void);
-void rxfaf_isr(void);
+void rxfaf_isr(void) ;
 
 
 #endif
