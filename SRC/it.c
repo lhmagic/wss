@@ -16,10 +16,10 @@ void EXTI0_1_IRQHandler(void) {
 	}
 }
 
-void TIM16_IRQHandler(void) {
-	if((TIM16->SR & TIM_SR_UIF) == TIM_SR_UIF) {
-		TIM16->SR &= ~TIM_SR_UIF;
-		TIM16->CR1 &= ~TIM_CR1_CEN;
-		tim16_out_isr();
+void TIM3_IRQHandler(void) {
+	if((TIM3->SR & TIM_SR_UIF) == TIM_SR_UIF) {
+		TIM3->SR &= ~TIM_SR_UIF;
+		TIM3->CR1 &= ~TIM_CR1_CEN;
+		tim3_out_isr();
 	}
 }

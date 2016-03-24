@@ -52,6 +52,8 @@ uint8_t is_iic_addr(void);
 uint8_t is_iic_nackf(void);
 void gpio_cfg(void);
 void usart_cfg(uint32_t bandrate);
+void usart_tx_disable(void);
+void usart_tx_enable(void);
 void usart_putc(uint8_t ch);
 void usart_tx(uint8_t *buf, uint8_t len);
 uint8_t is_usart_rxne(void);

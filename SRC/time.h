@@ -5,8 +5,8 @@
 
 
 void delay_ms(uint16_t ms);
-void TIM16_init(void);
-void setTIM16(uint16_t ms);
+void TIM3_init(void);
+void setTIM3(uint16_t ms);
 void time_tick_int(void);
 uint32_t millis(void) ;
 

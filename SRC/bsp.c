@@ -176,6 +176,14 @@ void usart_cfg(uint32_t bandrate) {
 	NVIC_EnableIRQ(USART1_IRQn);	
 }
 
+void usart_tx_disable(void) {
+	USART1->CR1 &= ~USART_CR1_TE;
+}
+
+void usart_tx_enable(void) {
+	USART1->CR1 |= USART_CR1_TE;
+}
+
 void usart_putc(uint8_t ch) {
 	while(!(USART1->ISR & USART_ISR_TXE));
 	USART1->TDR = ch;	

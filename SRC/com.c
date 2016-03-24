@@ -12,7 +12,11 @@ static uint8_t rcv_cnt;
 void usart_isr(void) {
 
 	if(is_usart_rxne()) {
-		setTIM16(10);
+		if(is_slave()) {
+			setTIM3(3500);
+		} else {
+			setTIM3(350);
+		}
 		switch (rcv_fsm) {
 			case RCV_IDLE:
 				rcv_fsm = RCV_ING;
@@ -40,13 +44,16 @@ uint8_t offset = 0;
 		}
 		si4432_tx(usart_rx_buf+offset, rcv_cnt-offset);
 		rcv_done = 0;
+		usart_tx_enable();
 		led1_off();
 	}	
 }
 
-void tim16_out_isr(void) {
+void tim3_out_isr(void) {
 	TIM16->DIER &= ~TIM_DIER_UIE;
 	rcv_fsm = RCV_IDLE;
-	if(rcv_cnt > 0)
+	if(rcv_cnt > 0) {
 		rcv_done = 1;
+		usart_tx_disable();
+	}
 }

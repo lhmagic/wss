@@ -7,7 +7,7 @@
 
 
 void usart_isr(void);
-void tim16_out_isr(void);
+void tim3_out_isr(void);
 void usart_packet_handle(void);
 void iic_isr(void);
 void iic_packet_handle(void);
