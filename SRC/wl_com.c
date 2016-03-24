@@ -51,25 +51,16 @@ int status, mask;
 }
 
 
-extern uint8_t iic_buf[256];
-
 void rf_packet_handle(void) {
-uint8_t i;	
 	
 	if(rf_packet == 1) {
 		led2_on();
 		rf_packet = 0;
 		
-		if(!is_slave()) {
-//			get_header();
-			for(i=0; i<rf_cnt; i++) {
-				iic_buf[0x80|i] = rf_buf[i];
-			}
-			iic_buf[0x80|0x7F] = rf_cnt;					//存放接收到的数据长度
-		} else {
+		if(is_slave()) {
 			usart_packet_handle();
-			usart_tx(rf_buf, rf_cnt);
 		}
+		usart_tx(rf_buf, rf_cnt);
 		led2_off();
 	}
 }

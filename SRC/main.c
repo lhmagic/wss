@@ -21,7 +21,6 @@ uint8_t sid;
 	grp = get_gid();
 		
 	if(!is_slave()) {
-		iic_cfg();
 		broadcast_enable();
 	}else {
 		set_header(sid);
@@ -41,9 +40,7 @@ uint8_t sid;
 		}
 		
 		if(!is_slave()) {
-			iic_packet_handle();
-		} else {
-//			usart_packet_handle();
+			usart_packet_handle();
 		}
 
 		rf_packet_handle();

@@ -23,7 +23,3 @@ void TIM16_IRQHandler(void) {
 		tim16_out_isr();
 	}
 }
-
-void I2C1_IRQHandler(void) {
-	iic_isr();
-}
