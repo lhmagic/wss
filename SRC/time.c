@@ -36,6 +36,8 @@ void TIM3_init(void) {
 	TIM3->CR1 = TIM_CR1_URS | TIM_CR1_UDIS;
 	TIM3->SR &= ~TIM_SR_UIF;
 	TIM3->DIER |= TIM_DIER_UIE;
+	
+	setTIM3(10);
 }
 
 void setTIM3(uint16_t ns) {
