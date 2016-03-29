@@ -1,6 +1,6 @@
 #include  "si4432.h"
 
-#define BW_50000
+#define BW_9600
 
 void si4432_init(void) {
     rf_sdn_high();

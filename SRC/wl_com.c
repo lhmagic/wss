@@ -55,11 +55,7 @@ void rf_packet_handle(void) {
 	
 	if(rf_packet == 1) {
 		led2_on();
-		rf_packet = 0;
-		
-		if(is_slave()) {
-			usart_packet_handle();
-		}
+		rf_packet = 0;		
 		usart_tx(rf_buf, rf_cnt);
 		led2_off();
 	}

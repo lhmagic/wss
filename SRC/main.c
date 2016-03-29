@@ -17,11 +17,7 @@ uint8_t sid;
 	sid = get_sid();
 	grp = get_gid();
 
-	if(is_slave()) {
-		usart_cfg(9600);
-	} else {
-		usart_cfg(115200);
-	}
+	usart_cfg(115200);
 	
 	spi_cfg();
 	
@@ -46,10 +42,7 @@ uint8_t sid;
 			NVIC_SystemReset();			
 		}
 		
-		if(!is_slave()) {
-			usart_packet_handle();
-		}
-
+		usart_packet_handle();
 		rf_packet_handle();
 	}
 }
